@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import RealmSwift
 
 class ViewController: UIViewController {
     
@@ -15,21 +16,30 @@ class ViewController: UIViewController {
     //表示する1日の授業数
     var classCount:Int = 6
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        //データの保存先のURLの表示(Realm)
+        print(Realm.Configuration.defaultConfiguration.fileURL!)
         
+        //navigationbarの色とタイトル
         navigationController?.navigationBar.barTintColor = .gray
         navigationItem.title = "時間割表"
-        
-        setButtons(dayCount: dayCount, classCount: classCount)
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        //画面が表示されるたびに更新
+        setButtons(dayCount: dayCount, classCount: classCount)
+    }
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////
     
     func setButtons(dayCount:Int,classCount:Int){
         
-        //縦横目次
+        //すべてのパーツを消去して再配置を始める(二重に重なるのを防ぐ)
+        removeBtns()
+        
+        //縦横目次(わかりやすさのため)
         let dayDisp = 1
         let classDisp = 1
         //Y軸更新
@@ -52,10 +62,9 @@ class ViewController: UIViewController {
         //ボタンの縦横幅
         let classAxisWidth_dayAxisHeight:CGFloat = 30
         let dayAxisWidth:CGFloat = CGFloat(((screenWidth - (classAxisWidth_dayAxisHeight + spaceWidth)) - (CGFloat(dayCount+1))*spaceWidth) / CGFloat(dayCount))
-        print("dayAxisWidth:\(dayAxisWidth)")
         let classAxisHeight:CGFloat = 100
 
-        
+        //ループ開始
         for y in 0..<classCount+classDisp{
             SumX = 0
             for x in 0..<dayCount+dayDisp+plusY{
@@ -69,7 +78,6 @@ class ViewController: UIViewController {
                     if x == 0{
                         //タグ番号をつける(後でxとyに分解できるようにしておく)
                         btn.tag = x*100 + y
-                        print("tag:\(btn.tag)")
 
                         //ボタンのxy座標を決める
                         btnX = SumX + spaceWidth
@@ -78,13 +86,11 @@ class ViewController: UIViewController {
                         btn.frame = CGRect(x: btnX, y: btnY, width: classAxisWidth_dayAxisHeight, height: classAxisWidth_dayAxisHeight)
                         //縦横幅合計更新(SumYの更新はなし)
                         SumX += btn.frame.width + spaceWidth
-                        print("SumX:\(SumX)")
-                        print("frame:\(btn.frame)")
                         self.view.addSubview(btn)
                     }else if x != 0 && x != dayCount+1{
                         //タグ番号
                         btn.tag =  x*100 + y
-                        print("tag:\(btn.tag)")
+                        
                         //ボタンタイトル
                         btn.setTitle(DayCheck(btn.tag), for: .normal)
                         btn.setTitleColor(.black, for: .normal)
@@ -95,8 +101,6 @@ class ViewController: UIViewController {
                         btn.frame = CGRect(x: btnX, y: btnY, width: dayAxisWidth, height: classAxisWidth_dayAxisHeight)
                         //縦横幅合計更新(SumYの更新はなし)
                         SumX += btn.frame.width + spaceWidth
-                        print("SumX:\(SumX)")
-                        print("frame:\(btn.frame)")
                         self.view.addSubview(btn)
                     }else if x == dayCount+1{
                         SumY += classAxisWidth_dayAxisHeight + spaceWidth
@@ -107,7 +111,7 @@ class ViewController: UIViewController {
                     if x == 0{
                         //タグ番号
                         btn.tag = 100*x + y
-                        print("tag:\(btn.tag)")
+                        
                         btn.setTitle(String(btn.tag%100), for: .normal)
                         btn.setTitleColor(.black, for: .normal)
                         //ボタンのxy座標を決める
@@ -117,13 +121,11 @@ class ViewController: UIViewController {
                         btn.frame = CGRect(x: btnX, y: btnY, width: classAxisWidth_dayAxisHeight, height: classAxisHeight)
                         //縦横幅合計更新(SumYの更新はなし)
                         SumX += btn.frame.width + spaceWidth
-                        print("SumX:\(SumX)")
-                        print("frame:\(btn.frame)")
                         self.view.addSubview(btn)
                     }else if x != 0 && x != dayCount+1{
                         //タグ番号
                         btn.tag = 100*x + y
-                        print("tag:\(btn.tag)")
+
                         //ボタンのxy座標を決める
                         btnX = SumX + spaceWidth
                         btnY = SumY + spaceWidth
@@ -131,9 +133,35 @@ class ViewController: UIViewController {
                         btn.frame = CGRect(x: btnX, y: btnY, width: dayAxisWidth, height: classAxisHeight)
                         //縦横幅合計更新(SumYの更新はなし)
                         SumX += btn.frame.width + spaceWidth
-                        print("SumX:\(SumX)")
-                        print("frame:\(btn.frame)")
                         btn.addTarget(self, action: #selector(btnTapped(sender:)), for: .touchUpInside)
+                        
+                        //Realm作業
+                        //インスタンス化
+                        let realm = try! Realm()
+                        let subjectsFromRealm = realm.objects(classModel.self)
+                        
+                        //Realm内に保存データがあるか確認
+                        for i in 0..<subjectsFromRealm.count{
+                            //データがあった場合の処理
+                            if subjectsFromRealm[i].classPlace == btn.tag{
+                                print("一致あり01:\(btn.tag)")
+                                let nowSubject = subjectsFromRealm[i].subjectName!
+                                var nowRoom:String
+                                if subjectsFromRealm[i].roomNum != nil{
+                                    nowRoom = subjectsFromRealm[i].roomNum!
+                                }else{
+                                    nowRoom = "-"
+                                }
+                                
+                                print("\(nowSubject)\n\(nowRoom)\n")
+                                btn.setTitleColor(.black, for: .normal)
+                                btn.titleLabel?.numberOfLines = 0
+                                btn.titleLabel?.textAlignment = .center
+                                btn.titleLabel?.adjustsFontForContentSizeCategory = true
+                                btn.setTitle("\(nowSubject)\n\(nowRoom)", for: .normal)
+                            }
+                        }
+                        
                         self.view.addSubview(btn)
                     }else if x == dayCount+1{
                         SumY += classAxisHeight + spaceWidth
@@ -147,11 +175,46 @@ class ViewController: UIViewController {
         }
     }
     
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    //ボタンを押された時の処理
     @objc func btnTapped(sender:UIButton){
         let btn:UIButton = sender
+        let tagNum:Int = sender.tag
+        print("クラスボタンが押されました")
         print("曜日:\(DayCheck(btn.tag)),時限:\(btn.tag%10)")
-        performSegue(withIdentifier: "goDetails", sender: nil)
+        print("画面遷移します")
+        performSegue(withIdentifier: "goDetails", sender: tagNum)
     }
+    //値を渡したい
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "goDetails"{
+            if let nextVC = segue.destination as? DetailsTableViewController{
+                let tag = (sender as? Int)!
+                nextVC.tag = tag
+                
+                //Realm作業
+                //インスタンス化
+                let realm = try! Realm()
+                let subjectsFromRealm = realm.objects(classModel.self)
+                
+                //Realm内に保存データがあるか確認
+                for i in 0..<subjectsFromRealm.count{
+                    //データがあった場合の処理
+                    if subjectsFromRealm[i].classPlace == tag{
+                        print("一致あり02:\(tag)")
+                        nextVC.exist = true
+                        break//一致した場合はbreakしないと次のループで書き換えられちゃう
+                    }else{
+                        print("一致なし02:\(tag)")
+                        nextVC.exist = false
+                    }
+                }
+            }
+        }
+    }
+    
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
     func DayCheck(_ btnTag:Int)->String{
@@ -179,12 +242,26 @@ class ViewController: UIViewController {
         }
         return returnDay
     }
+    
+    
+    //設置してあるボタンを消去する関数
+    func removeBtns(){
+        for i in view.subviews{
+            //print("removedObjectsTag:\(i.tag):")
+            i.removeFromSuperview()
+        }
+    }
 }
 
 //////////////////////////////////////////////////////////////
 /*
  参考文献
  
+ 画面変異での値渡し
+ https://teratail.com/questions/161439
+ 
+ パーツの消去
+ https://teratail.com/questions/35300
  
 */
 /////////////////////////////////////////////////////////////

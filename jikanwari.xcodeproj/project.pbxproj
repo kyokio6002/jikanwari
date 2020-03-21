@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -14,6 +14,7 @@
 		A84F9076241A1AAF0072F438 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A84F9075241A1AAF0072F438 /* Assets.xcassets */; };
 		A84F9079241A1AAF0072F438 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A84F9077241A1AAF0072F438 /* LaunchScreen.storyboard */; };
 		A859D790241F419600FF789D /* DetailsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A859D78F241F419600FF789D /* DetailsTableViewController.swift */; };
+		A859D792241F57E000FF789D /* classModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A859D791241F57E000FF789D /* classModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,6 +28,7 @@
 		A84F9078241A1AAF0072F438 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A84F907A241A1AAF0072F438 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A859D78F241F419600FF789D /* DetailsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailsTableViewController.swift; sourceTree = "<group>"; };
+		A859D791241F57E000FF789D /* classModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = classModel.swift; sourceTree = "<group>"; };
 		D63A7813D40C03D44E9CBAFD /* Pods-jikanwari.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-jikanwari.release.xcconfig"; path = "Target Support Files/Pods-jikanwari/Pods-jikanwari.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -66,6 +68,7 @@
 				A84F906E241A1AA80072F438 /* AppDelegate.swift */,
 				A84F9070241A1AA80072F438 /* ViewController.swift */,
 				A859D78F241F419600FF789D /* DetailsTableViewController.swift */,
+				A859D791241F57E000FF789D /* classModel.swift */,
 				A84F9072241A1AA80072F438 /* Main.storyboard */,
 				A84F9075241A1AAF0072F438 /* Assets.xcassets */,
 				A84F9077241A1AAF0072F438 /* LaunchScreen.storyboard */,
@@ -80,7 +83,6 @@
 				6AB8FB33203055D257996F43 /* Pods-jikanwari.debug.xcconfig */,
 				D63A7813D40C03D44E9CBAFD /* Pods-jikanwari.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -209,6 +211,7 @@
 			files = (
 				A84F9071241A1AA80072F438 /* ViewController.swift in Sources */,
 				A859D790241F419600FF789D /* DetailsTableViewController.swift in Sources */,
+				A859D792241F57E000FF789D /* classModel.swift in Sources */,
 				A84F906F241A1AA80072F438 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
