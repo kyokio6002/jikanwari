@@ -147,7 +147,7 @@ class ViewController: UIViewController {
                                 print("一致あり01:\(btn.tag)")
                                 let nowSubject = subjectsFromRealm[i].subjectName!
                                 var nowRoom:String
-                                if subjectsFromRealm[i].roomNum != nil{
+                                if subjectsFromRealm[i].roomNum != nil && subjectsFromRealm[i].roomNum != ""{
                                     nowRoom = subjectsFromRealm[i].roomNum!
                                 }else{
                                     nowRoom = "-"
