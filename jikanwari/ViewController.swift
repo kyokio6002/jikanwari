@@ -23,7 +23,7 @@ class ViewController: UIViewController {
         print(Realm.Configuration.defaultConfiguration.fileURL!)
         
         //navigationbarの色とタイトル
-        navigationController?.navigationBar.barTintColor = .gray
+        //navigationController?.navigationBar.barTintColor = .gray
         navigationItem.title = "時間割表"
     }
 
@@ -178,6 +178,13 @@ class ViewController: UIViewController {
     
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
+    
+    //settingBtnを押された時の処理
+    @IBAction func settiongBtnTapped(_ sender: Any) {
+        performSegue(withIdentifier: "goJikanwaris", sender: nil)
+    }
+    
+    
     //ボタンを押された時の処理
     @objc func btnTapped(sender:UIButton){
         let btn:UIButton = sender
@@ -252,6 +259,7 @@ class ViewController: UIViewController {
         }
     }
 }
+
 
 //////////////////////////////////////////////////////////////
 /*

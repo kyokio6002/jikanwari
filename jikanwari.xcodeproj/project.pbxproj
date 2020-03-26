@@ -13,6 +13,9 @@
 		A84F9074241A1AA80072F438 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A84F9072241A1AA80072F438 /* Main.storyboard */; };
 		A84F9076241A1AAF0072F438 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A84F9075241A1AAF0072F438 /* Assets.xcassets */; };
 		A84F9079241A1AAF0072F438 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A84F9077241A1AAF0072F438 /* LaunchScreen.storyboard */; };
+		A85023D4242B425B0004F16A /* SettingTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A85023D3242B425B0004F16A /* SettingTableViewController.swift */; };
+		A85023D9242B53BF0004F16A /* jikanwariDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = A85023D8242B53BF0004F16A /* jikanwariDetail.swift */; };
+		A85023DB242B9BB30004F16A /* JikanwarisTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A85023DA242B9BB30004F16A /* JikanwarisTableViewController.swift */; };
 		A859D790241F419600FF789D /* DetailsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A859D78F241F419600FF789D /* DetailsTableViewController.swift */; };
 		A859D792241F57E000FF789D /* classModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A859D791241F57E000FF789D /* classModel.swift */; };
 /* End PBXBuildFile section */
@@ -27,6 +30,9 @@
 		A84F9075241A1AAF0072F438 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A84F9078241A1AAF0072F438 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A84F907A241A1AAF0072F438 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A85023D3242B425B0004F16A /* SettingTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingTableViewController.swift; sourceTree = "<group>"; };
+		A85023D8242B53BF0004F16A /* jikanwariDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = jikanwariDetail.swift; sourceTree = "<group>"; };
+		A85023DA242B9BB30004F16A /* JikanwarisTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JikanwarisTableViewController.swift; sourceTree = "<group>"; };
 		A859D78F241F419600FF789D /* DetailsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailsTableViewController.swift; sourceTree = "<group>"; };
 		A859D791241F57E000FF789D /* classModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = classModel.swift; sourceTree = "<group>"; };
 		D63A7813D40C03D44E9CBAFD /* Pods-jikanwari.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-jikanwari.release.xcconfig"; path = "Target Support Files/Pods-jikanwari/Pods-jikanwari.release.xcconfig"; sourceTree = "<group>"; };
@@ -68,7 +74,10 @@
 				A84F906E241A1AA80072F438 /* AppDelegate.swift */,
 				A84F9070241A1AA80072F438 /* ViewController.swift */,
 				A859D78F241F419600FF789D /* DetailsTableViewController.swift */,
+				A85023DA242B9BB30004F16A /* JikanwarisTableViewController.swift */,
+				A85023D3242B425B0004F16A /* SettingTableViewController.swift */,
 				A859D791241F57E000FF789D /* classModel.swift */,
+				A85023D8242B53BF0004F16A /* jikanwariDetail.swift */,
 				A84F9072241A1AA80072F438 /* Main.storyboard */,
 				A84F9075241A1AAF0072F438 /* Assets.xcassets */,
 				A84F9077241A1AAF0072F438 /* LaunchScreen.storyboard */,
@@ -210,9 +219,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				A84F9071241A1AA80072F438 /* ViewController.swift in Sources */,
+				A85023DB242B9BB30004F16A /* JikanwarisTableViewController.swift in Sources */,
 				A859D790241F419600FF789D /* DetailsTableViewController.swift in Sources */,
 				A859D792241F57E000FF789D /* classModel.swift in Sources */,
+				A85023D9242B53BF0004F16A /* jikanwariDetail.swift in Sources */,
 				A84F906F241A1AA80072F438 /* AppDelegate.swift in Sources */,
+				A85023D4242B425B0004F16A /* SettingTableViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
