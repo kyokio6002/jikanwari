@@ -1,0 +1,6 @@
+framework module Pods_jikanwari {
+  umbrella header "Pods-jikanwari-umbrella.h"
+
+  export *
+  module * { export * }
+}
