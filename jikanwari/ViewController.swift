@@ -18,6 +18,8 @@ class ViewController: UIViewController {
     //現在の時間割のデータ
     var nowJikanwari:jikanwariDetail?
     
+    //scrollView
+    @IBOutlet weak var scrollView: UIScrollView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,36 +28,19 @@ class ViewController: UIViewController {
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        checkJikanwariDatas()
+        //scrollViewを設置
+        configureSV()
+        //title設置
         navigationItem.title = nowJikanwari?.jikanwariName
-        print("現在の時間り:\(nowJikanwari)")
+        //print("現在の時間り:\(nowJikanwari!)")
     }
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////
     
-    //時間割データがあるかないか
-    func checkJikanwariDatas(){
-        
-        let realm = try! Realm()
-        let initialIsTrue = true
-        let theJikanwari:jikanwariDetail? = realm.objects(jikanwariDetail.self).filter("initialOrNot == %@",initialIsTrue).first
-        
-        if let nonOptionaltheJikanwari = theJikanwari{
-            print("時間割あるよ")
-            setButtons(dayCount: nonOptionaltheJikanwari.days, classCount: nonOptionaltheJikanwari.classes,jikanwariData: nonOptionaltheJikanwari)
-            nowJikanwari = theJikanwari
-        }else if theJikanwari == nil{
-            removeBtns()
-            print("時間割データがありません")
-        }
-    }
-    
-    
     
     //ボタン設置関数
-    func setButtons(dayCount:Int,classCount:Int,jikanwariData:jikanwariDetail){
-        
-        //すべてのパーツを消去して再配置を始める(二重に重なるのを防ぐ)
+    func setButtons(dayCount:Int,classCount:Int,jikanwariData:jikanwariDetail)->UIView{
+        //scrollView上のボタンを消去
         removeBtns()
         
         //縦横目次(わかりやすさのため)
@@ -69,7 +54,7 @@ class ViewController: UIViewController {
         let navigationBarHeight:CGFloat = (self.navigationController?.navigationBar.frame.size.height)!
         //縦横幅の合計(の初期値)
         var SumX:CGFloat = 0
-        var SumY:CGFloat = statusbarHeight + navigationBarHeight
+        var SumY:CGFloat = 0
         //ボタンのxy座標
         var btnX:CGFloat = 0
         var btnY:CGFloat = 0
@@ -83,6 +68,19 @@ class ViewController: UIViewController {
         let dayAxisWidth:CGFloat = CGFloat(((screenWidth - (classAxisWidth_dayAxisHeight + spaceWidth)) - (CGFloat(dayCount+1))*spaceWidth) / CGFloat(dayCount))
         let classAxisHeight:CGFloat = 100
 
+        //contentsViewを作る
+        let contentsView = UIView()
+        //contentsViewのheight
+        var height:CGFloat = 0
+        let jikanwariHeight = spaceWidth*CGFloat(classCount+2)+classAxisHeight*CGFloat(classCount) + classAxisWidth_dayAxisHeight
+        if jikanwariHeight >= (screenHeight - statusbarHeight - navigationBarHeight){
+            height = jikanwariHeight
+        }else{
+            height = scrollView.frame.height
+        }
+        contentsView.frame = CGRect(x: 0, y: 0, width: screenWidth, height: height)
+        
+        
         //ループ開始
         for y in 0..<classCount+classDisp{
             SumX = 0
@@ -105,7 +103,7 @@ class ViewController: UIViewController {
                         btn.frame = CGRect(x: btnX, y: btnY, width: classAxisWidth_dayAxisHeight, height: classAxisWidth_dayAxisHeight)
                         //縦横幅合計更新(SumYの更新はなし)
                         SumX += btn.frame.width + spaceWidth
-                        self.view.addSubview(btn)
+                        contentsView.addSubview(btn)
                     }else if x != 0 && x != dayCount+1{
                         //タグ番号
                         btn.tag =  x*100 + y
@@ -120,7 +118,7 @@ class ViewController: UIViewController {
                         btn.frame = CGRect(x: btnX, y: btnY, width: dayAxisWidth, height: classAxisWidth_dayAxisHeight)
                         //縦横幅合計更新(SumYの更新はなし)
                         SumX += btn.frame.width + spaceWidth
-                        self.view.addSubview(btn)
+                        contentsView.addSubview(btn)
                     }else if x == dayCount+1{
                         SumY += classAxisWidth_dayAxisHeight + spaceWidth
                     }else{
@@ -140,7 +138,7 @@ class ViewController: UIViewController {
                         btn.frame = CGRect(x: btnX, y: btnY, width: classAxisWidth_dayAxisHeight, height: classAxisHeight)
                         //縦横幅合計更新(SumYの更新はなし)
                         SumX += btn.frame.width + spaceWidth
-                        self.view.addSubview(btn)
+                        contentsView.addSubview(btn)
                     }else if x != 0 && x != dayCount+1{
                         //タグ番号
                         btn.tag = 100*x + y
@@ -154,10 +152,9 @@ class ViewController: UIViewController {
                         SumX += btn.frame.width + spaceWidth
                         btn.addTarget(self, action: #selector(btnTapped(sender:)), for: .touchUpInside)
                         
-                        
                         for i in 0..<jikanwariData.classDetail.count{
                             if jikanwariData.classDetail[i].classPlace == btn.tag{
-                                print("一致あり01:\(btn.tag)")
+                                //print("一致あり01:\(btn.tag)")
                                 let nowSubject = jikanwariData.classDetail[i].subjectName!
                                 var nowRoom:String
                                 if jikanwariData.classDetail[i].roomNum != nil && jikanwariData.classDetail[i].roomNum != ""{
@@ -165,7 +162,7 @@ class ViewController: UIViewController {
                                 }else{
                                     nowRoom = ""
                                 }
-                                print("\(nowSubject)\n\(nowRoom)\n")
+                                //print("\(nowSubject)\n\(nowRoom)\n")
                                 btn.setTitleColor(.black, for: .normal)
                                 btn.titleLabel?.numberOfLines = 0
                                 btn.titleLabel?.textAlignment = .center
@@ -173,7 +170,7 @@ class ViewController: UIViewController {
                                 btn.setTitle("\(nowSubject)\n\(nowRoom)", for: .normal)
                             }
                         }
-                        self.view.addSubview(btn)
+                        contentsView.addSubview(btn)
                     }else if x == dayCount+1{
                         SumY += classAxisHeight + spaceWidth
                     }else{
@@ -184,8 +181,34 @@ class ViewController: UIViewController {
                 }
             }
         }
+        contentsView.backgroundColor = .red
+        return contentsView
     }
     
+    //scrollViewにcontentsViewを貼り付けてつける
+    func configureSV(){
+        
+        let realm = try! Realm()
+        let initialIsTrue = true
+        let theJikanwari:jikanwariDetail? = realm.objects(jikanwariDetail.self).filter("initialOrNot == %@",initialIsTrue).first
+        
+        if let nonOptionaltheJikanwari = theJikanwari{
+            //print("時間割あるよ")
+            //scrollViewにcontentsViewを配置させる
+            let subView = setButtons(dayCount: nonOptionaltheJikanwari.days, classCount: nonOptionaltheJikanwari.classes,jikanwariData: nonOptionaltheJikanwari)
+            //print("subview:\(subView.frame)")
+            scrollView.addSubview(subView)
+            //scrollViewにcontentsViewのサイズを教える
+            scrollView.contentSize = subView.frame.size
+            nowJikanwari = theJikanwari
+            //print("contentsView:\(subView.frame)")
+            //print("scrollView:\(scrollView.frame)")
+        }else if theJikanwari == nil{
+            removeBtns()
+            print("時間割データがありません")
+        }
+        
+    }
     
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
@@ -260,10 +283,9 @@ class ViewController: UIViewController {
     }
     
     
-    //設置してあるボタンを消去する関数
+    //ScrollView上に設置してあるボタンを消去する関数
     func removeBtns(){
-        for i in view.subviews{
-            //print("removedObjectsTag:\(i.tag):")
+        for i in scrollView.subviews{
             i.removeFromSuperview()
         }
     }

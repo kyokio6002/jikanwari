@@ -103,18 +103,19 @@ class DetailsTableViewController: UITableViewController {
         //classを消去ボタン
         if indexPath.section == 2 && exist == true{
             //現在のclass
-            let theClass:classModel = (nowJikanwari?.classDetail.filter("classPlace == %@",tag).first)!
+            let theClass:classModel = ((nowJikanwari?.classDetail.filter("classPlace == %@",tag).first)!)
+            
             //現在のclassのid
             let selectedClassId = theClass.classModelNum
             //realmのインスタンス化
             let realm = try! Realm()
-            let classesFromRealm = realm.objects(classModel.self).filter("classModelNum == %@",selectedClassId)
+            let classesFromRealm = realm.objects(classModel.self).filter("classModelNum == %@",selectedClassId as Any)
             print("classes:\(classesFromRealm)")
             
             let alert = UIAlertController(title: "他のクラス情報も消去されます", message: "他も消去されるよ？", preferredStyle: .alert)
             let delete = UIAlertAction(title: "消去", style: .default) { (UIAlertAction) in
                 
-                for j in 0..<classesFromRealm.count{
+                for _ in 0..<classesFromRealm.count{
                     try! realm.write{
                         realm.delete(classesFromRealm)
                     }
@@ -131,6 +132,8 @@ class DetailsTableViewController: UITableViewController {
                 try! realm.write{
                     realm.delete(classesFromRealm)
                 }
+                //元の画面に戻る
+                self.navigationController?.popToRootViewController(animated: true)
             }else if classesFromRealm.count >= 2{
                 present(alert,animated: true,completion: nil)
             }
@@ -168,7 +171,7 @@ class DetailsTableViewController: UITableViewController {
             let selectedClassId = theClass.classModelNum
             //realmのインスタンス化
             let realm = try! Realm()
-            let classesFromRealm = realm.objects(classModel.self).filter("classModelNum == %@",selectedClassId)
+            let classesFromRealm = realm.objects(classModel.self).filter("classModelNum == %@",selectedClassId as Any)
             print("classes:\(classesFromRealm)")
             
             let alert = UIAlertController(title: "他のクラス情報も変更されます", message: "他も変更されるよ？", preferredStyle: .alert)
@@ -254,8 +257,8 @@ class DetailsTableViewController: UITableViewController {
                 teacherTextField.text = nowJikanwari?.classDetail[i].teacherName
                 pointsTextField.text = nowJikanwari?.classDetail[i].points
                 memo.text = nowJikanwari?.classDetail[i].memo
-                print("exist:\(exist),tag:\(tag)")
-                print("一致したmodel:\(nowJikanwari?.classDetail[i])")
+                //print("exist:\(exist),tag:\(tag)")
+                //print("一致したmodel:\(nowJikanwari?.classDetail[i])")
                 cell.textLabel?.textColor = .lightGray
                 deleteCell.textLabel?.textColor = .red
                 break
