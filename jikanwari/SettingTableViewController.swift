@@ -121,7 +121,7 @@ class SettingTableViewController: UITableViewController {
         }else if exist == false{
             if jikanwariNameTextField.text != nil && jikanwariNameTextField.text != ""{
                 let realm = try! Realm()
-                var theClass:jikanwariDetail = jikanwariDetail()
+                let theClass:jikanwariDetail = jikanwariDetail()
                 
                 theClass.jikanwariName = jikanwariNameTextField.text
                 theClass.days = 5

@@ -37,8 +37,8 @@ class JikanwarisTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if jikanwariDatas?.count != nil{
-            print(jikanwariDatas?.count)
-            print(jikanwariDatas)
+            //print(jikanwariDatas?.count)
+            //print(jikanwariDatas)
             return jikanwariDatas?.count ?? 0
         }else{
             return 0

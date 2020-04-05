@@ -17,7 +17,18 @@
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2yJ-02-sG7">
+                                <rect key="frame" x="0.0" y="88" width="414" height="788"/>
+                            </scrollView>
+                        </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="2yJ-02-sG7" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="4Z1-i4-LMp"/>
+                            <constraint firstItem="2yJ-02-sG7" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="Dpk-F5-FN6"/>
+                            <constraint firstAttribute="bottom" secondItem="2yJ-02-sG7" secondAttribute="bottom" constant="20" symbolic="YES" id="Yzt-YV-iWB"/>
+                            <constraint firstItem="2yJ-02-sG7" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="ZPd-W7-RSW"/>
+                        </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <navigationItem key="navigationItem" id="n7s-Ub-Ua9">
@@ -29,12 +40,13 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="scrollView" destination="2yJ-02-sG7" id="SzI-J4-B9S"/>
                         <segue destination="DeF-ny-61p" kind="show" identifier="goDetails" id="1Sk-rg-xJd"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1175" y="119"/>
+            <point key="canvasLocation" x="1173.913043478261" y="118.52678571428571"/>
         </scene>
         <!--Jikanwaris Table View Controller-->
         <scene sceneID="cU4-ZP-mTW">
@@ -538,8 +550,8 @@
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="単位数" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1Gs-2w-5Ot">
-                                                    <rect key="frame" x="20" y="11.5" width="52" height="21"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="単位数" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1Gs-2w-5Ot">
+                                                    <rect key="frame" x="20" y="12.5" width="52" height="21"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
