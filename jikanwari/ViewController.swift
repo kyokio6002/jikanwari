@@ -35,17 +35,18 @@ class ViewController: UIViewController {
     
     //時間割データがあるかないか
     func checkJikanwariDatas(){
+        
         let realm = try! Realm()
-        let jikanwariDatas = realm.objects(jikanwariDetail.self)
-        for i in 0..<jikanwariDatas.count{
-            if jikanwariDatas[i].initialOrNot == true{
-                setButtons(dayCount: jikanwariDatas[i].days, classCount: jikanwariDatas[i].classes,jikanwariData: jikanwariDatas[i])
-                nowJikanwari = jikanwariDatas[i]
-                break
-            }else if i == jikanwariDatas.count-1{
-                removeBtns()
-                print("時間割データがありません")
-            }
+        let initialIsTrue = true
+        let theJikanwari:jikanwariDetail? = realm.objects(jikanwariDetail.self).filter("initialOrNot == %@",initialIsTrue).first
+        
+        if let nonOptionaltheJikanwari = theJikanwari{
+            print("時間割あるよ")
+            setButtons(dayCount: nonOptionaltheJikanwari.days, classCount: nonOptionaltheJikanwari.classes,jikanwariData: nonOptionaltheJikanwari)
+            nowJikanwari = theJikanwari
+        }else if theJikanwari == nil{
+            removeBtns()
+            print("時間割データがありません")
         }
     }
     
@@ -152,6 +153,7 @@ class ViewController: UIViewController {
                         //縦横幅合計更新(SumYの更新はなし)
                         SumX += btn.frame.width + spaceWidth
                         btn.addTarget(self, action: #selector(btnTapped(sender:)), for: .touchUpInside)
+                        
                         
                         for i in 0..<jikanwariData.classDetail.count{
                             if jikanwariData.classDetail[i].classPlace == btn.tag{
