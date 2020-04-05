@@ -57,7 +57,7 @@ class DetailsTableViewController: UITableViewController {
         if selected == false{
             print("--------------------")
             print("selected:\(selected)")
-            checkRealm(btnTag: tag)
+            checkExsist(btnTag: tag)
             
             //持ってきたらsubjectTextFieldの編集を可能にする
             subjectTextField.isSelected = true
@@ -79,7 +79,7 @@ class DetailsTableViewController: UITableViewController {
     
     //section数
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
+        return 3
     }
     //cellの数
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -88,14 +88,52 @@ class DetailsTableViewController: UITableViewController {
             return 6
         case 1:
             return 1
+        case 2:
+            return 1
         default:
             return 0
         }
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        //既存の授業を選択ボタン
         if indexPath.section == 1 && exist == false{
             performSegue(withIdentifier: "goClasses", sender: nil)
+        }
+        //classを消去ボタン
+        if indexPath.section == 2 && exist == true{
+            //現在のclass
+            let theClass:classModel = (nowJikanwari?.classDetail.filter("classPlace == %@",tag).first)!
+            //現在のclassのid
+            let selectedClassId = theClass.classModelNum
+            //realmのインスタンス化
+            let realm = try! Realm()
+            let classesFromRealm = realm.objects(classModel.self).filter("classModelNum == %@",selectedClassId)
+            print("classes:\(classesFromRealm)")
+            
+            let alert = UIAlertController(title: "他のクラス情報も消去されます", message: "他も消去されるよ？", preferredStyle: .alert)
+            let delete = UIAlertAction(title: "消去", style: .default) { (UIAlertAction) in
+                
+                for j in 0..<classesFromRealm.count{
+                    try! realm.write{
+                        realm.delete(classesFromRealm)
+                    }
+                }
+                //元の画面に戻る
+                self.navigationController?.popToRootViewController(animated: true)
+            }
+            let cancel = UIAlertAction(title: "cancel", style: .cancel, handler: nil)
+            alert.addAction(delete)
+            alert.addAction(cancel)
+            
+            //変更するclassの数によって場合わけ
+            if classesFromRealm.count == 1{
+                try! realm.write{
+                    realm.delete(classesFromRealm)
+                }
+            }else if classesFromRealm.count >= 2{
+                present(alert,animated: true,completion: nil)
+            }
         }
         //データを持ってきたのにsubjectTextFieldを変更しようとした場合の処理
         if indexPath == IndexPath(row: 0, section: 0) && selected == true{
@@ -123,53 +161,46 @@ class DetailsTableViewController: UITableViewController {
         //既存か新規か
         //既存の場合
         if exist == true{
-            //既存かつ同じ授業データを他で表示してる場合に保存する場合はalert出してokならすべて変更する処理を書きましょう、頑張りましょう
-            for i in 0..<(nowJikanwari?.classDetail.count)!{
-                //タグ番号が一致した場合
-                if nowJikanwari?.classDetail[i].classPlace == tag{
-                    
-                    //一致したclassのid
-                    let selectedClassId = nowJikanwari?.classDetail[i].classModelNum
-                    //realmのインスタンス化
-                    let realm = try! Realm()
-                    let classesFromRealm = realm.objects(classModel.self).filter("classModelNum = %@",selectedClassId)
-                    print("classes:\(classesFromRealm)")
-                    
-                    let alert = UIAlertController(title: "他のクラス情報も変更されます", message: "他も変更されるよ？", preferredStyle: .alert)
-                    let ok = UIAlertAction(title: "OK", style: .default) { (UIAlertAction) in
-                        
-                        for j in 0..<classesFromRealm.count{
-                            try! realm.write{
-                                classesFromRealm[j].subjectName = self.subjectTextField.text
-                                classesFromRealm[j].teacherName = self.teacherTextField.text
-                                classesFromRealm[j].roomNum = self.roomTextField.text
-                                classesFromRealm[j].points = self.pointsTextField.text
-                                classesFromRealm[j].memo = self.memo.text
-                            }
-                        }
-                        //元の画面に戻る
-                        self.navigationController?.popToRootViewController(animated: true)
+            
+            let theClass:classModel = (nowJikanwari?.classDetail.filter("classPlace == %@",tag).first)!
+            
+            //現在のclassのid
+            let selectedClassId = theClass.classModelNum
+            //realmのインスタンス化
+            let realm = try! Realm()
+            let classesFromRealm = realm.objects(classModel.self).filter("classModelNum == %@",selectedClassId)
+            print("classes:\(classesFromRealm)")
+            
+            let alert = UIAlertController(title: "他のクラス情報も変更されます", message: "他も変更されるよ？", preferredStyle: .alert)
+            let ok = UIAlertAction(title: "OK", style: .default) { (UIAlertAction) in
+                
+                for j in 0..<classesFromRealm.count{
+                    try! realm.write{
+                        classesFromRealm[j].subjectName = self.subjectTextField.text
+                        classesFromRealm[j].teacherName = self.teacherTextField.text
+                        classesFromRealm[j].roomNum = self.roomTextField.text
+                        classesFromRealm[j].points = self.pointsTextField.text
+                        classesFromRealm[j].memo = self.memo.text
                     }
-                    let cancel = UIAlertAction(title: "cancel", style: .cancel, handler: nil)
-                    alert.addAction(ok)
-                    alert.addAction(cancel)
-                    
-                    if classesFromRealm.count == 1{
-                        try! realm.write{
-                            classesFromRealm[0].subjectName = self.subjectTextField.text
-                            classesFromRealm[0].teacherName = self.teacherTextField.text
-                            classesFromRealm[0].roomNum = self.roomTextField.text
-                            classesFromRealm[0].points = self.pointsTextField.text
-                            classesFromRealm[0].memo = self.memo.text
-                        }
-                    }else if classesFromRealm.count >= 2{
-                        present(alert,animated: true,completion: nil)
-                    }
-                    
-                    break
-                }else{
-                    
                 }
+                //元の画面に戻る
+                self.navigationController?.popToRootViewController(animated: true)
+            }
+            let cancel = UIAlertAction(title: "cancel", style: .cancel, handler: nil)
+            alert.addAction(ok)
+            alert.addAction(cancel)
+            
+            //変更するclassの数によって場合わけ
+            if classesFromRealm.count == 1{
+                try! realm.write{
+                    classesFromRealm[0].subjectName = self.subjectTextField.text
+                    classesFromRealm[0].teacherName = self.teacherTextField.text
+                    classesFromRealm[0].roomNum = self.roomTextField.text
+                    classesFromRealm[0].points = self.pointsTextField.text
+                    classesFromRealm[0].memo = self.memo.text
+                }
+            }else if classesFromRealm.count >= 2{
+                present(alert,animated: true,completion: nil)
             }
         }
         //新規の場合
@@ -203,11 +234,18 @@ class DetailsTableViewController: UITableViewController {
     }
     
     //イッチするデータがあるか確かめる関数
-    func checkRealm(btnTag:Int){
+    func checkExsist(btnTag:Int){
+        
         let cell = super.tableView(tableView, cellForRowAt: IndexPath(row: 0, section: 1))
         cell.textLabel?.text = "既存の授業から選ぶ"
         cell.textLabel?.textAlignment = .center
         cell.textLabel?.textColor = .red
+        
+        let deleteCell = super.tableView(tableView,cellForRowAt: IndexPath(row: 0, section: 2))
+        deleteCell.textLabel?.text = "この授業を消去する"
+        deleteCell.textLabel?.textAlignment = .center
+        deleteCell.textLabel?.textColor = .lightGray
+        
         for i in 0..<(nowJikanwari?.classDetail.count)!{
             //データがあった場合の処理
             if nowJikanwari?.classDetail[i].classPlace == btnTag{
@@ -219,6 +257,7 @@ class DetailsTableViewController: UITableViewController {
                 print("exist:\(exist),tag:\(tag)")
                 print("一致したmodel:\(nowJikanwari?.classDetail[i])")
                 cell.textLabel?.textColor = .lightGray
+                deleteCell.textLabel?.textColor = .red
                 break
             }else{
                 subjectTextField.placeholder = "教科名を入力してください"
