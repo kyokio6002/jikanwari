@@ -59,12 +59,12 @@ class ViewController: UIViewController {
         var btnX:CGFloat = 0
         var btnY:CGFloat = 0
         //スペースの幅
-        let spaceWidth:CGFloat = 4
+        let spaceWidth:CGFloat = 3
         //スクリーンの縦横
         let screenWidth:CGFloat = UIScreen.main.bounds.width
         let screenHeight:CGFloat = UIScreen.main.bounds.height
         //ボタンの縦横幅
-        let classAxisWidth_dayAxisHeight:CGFloat = 30
+        let classAxisWidth_dayAxisHeight:CGFloat = 20
         let dayAxisWidth:CGFloat = CGFloat(((screenWidth - (classAxisWidth_dayAxisHeight + spaceWidth)) - (CGFloat(dayCount+1))*spaceWidth) / CGFloat(dayCount))
         let classAxisHeight:CGFloat = 100
 

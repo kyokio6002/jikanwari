@@ -1,35 +1,37 @@
 //
-//  AllClassesTableViewController.swift
+//  AllClassesAndPointsTableViewController.swift
 //  jikanwari
 //
-//  Created by 塩澤響 on 2020/03/29.
+//  Created by 塩澤響 on 2020/04/10.
 //  Copyright © 2020 塩澤響. All rights reserved.
 //
 
 import UIKit
 import RealmSwift
 
-class AllClassesTableViewController: UITableViewController {
+class AllClassesAndPointsTableViewController: UITableViewController {
     
-    //すべての時間割
-    var allClasses:Results<classModel>?
-    //すべての授業(idが同じものを含まない)
+    //既存の場合のプライマリーキー
+    var nowJikanwariData:jikanwariDetail?
+    
     var allOriginalClasses:[classModel] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
     }
-
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
-    
-    //id(classModelNum)の被りなしですべてのclassを表示
+
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        
         let realm = try! Realm()
+        let theJikanwari = realm.object(ofType: jikanwariDetail.self, forPrimaryKey: nowJikanwariData?.jikanwariModelNum)
+        
         //すべての授業(idが同じのも含む)
-        let allClasses = realm.objects(classModel.self)
+        let allClasses = realm.objects(classModel.self).filter("jikanwariPrimaryKey == %@",theJikanwari?.jikanwariModelNum as Any)
         
         for i in 0..<allClasses.count{
             //print("i:\(i)")
@@ -47,43 +49,24 @@ class AllClassesTableViewController: UITableViewController {
                 }
             }
         }
-        print("Cellcount:\(allOriginalClasses.count)")
+        
         return allOriginalClasses.count
     }
 
-    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
+        
+        
         cell.textLabel?.text = allOriginalClasses[indexPath.row].subjectName
+        let points:Int = allOriginalClasses[indexPath.row].points
+        cell.detailTextLabel?.text = "\(points)"
+
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        //セルの選択の解除
         tableView.deselectRow(at: indexPath, animated: true)
-        /*let realm = try! Realm()
-        allClasses = realm.objects(classModel.self)*/
-        
-        
-        
-        //print(allClasses?[indexPath.row])
-        
-        let previousNC = self.navigationController!
-        let previousVC = previousNC.viewControllers[previousNC.viewControllers.count - 2] as! DetailsTableViewController
-        //previousVC.getFromAllClassesVC = allClasses![indexPath.row]
-        previousVC.getFromAllClassesVC = allOriginalClasses[indexPath.row]
-        previousVC.selected = true
-        //元の画面に戻る
-        self.navigationController?.popViewController(animated: true)
     }
-}
 
-////////////////////////////////////////////////////////////////
-/*
- 参考文献
- 
- 他の場面のデータの書き換え(performSegueなしの場合(ex:前の画面に戻る時performSegueだとアニメーションが左から右になるから戻った感なくて使わない場合))
- https://qiita.com/wadaaaan/items/acc8967c836d616e3b0b
- 
-*/
-///////////////////////////////////////////////////////////////
+}
