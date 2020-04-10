@@ -61,6 +61,8 @@ class SettingTableViewController: UITableViewController {
         if indexPath.section == 0{
             if indexPath.row == 2{
                 performSegue(withIdentifier: "goDays", sender: nil)
+            }else if indexPath.row == 3{
+                performSegue(withIdentifier: "goAllClassesAndPoints", sender: nil)
             }
         }else if indexPath.section == 1{
             if nowJikanwariData?.initialOrNot == true{
@@ -111,7 +113,7 @@ class SettingTableViewController: UITableViewController {
             let theJikanwari = realm.object(ofType: jikanwariDetail.self, forPrimaryKey: nowJikanwariData?.jikanwariModelNum)
             try! realm.write{
                 theJikanwari?.jikanwariName = jikanwariNameTextField.text
-                theJikanwari?.days = 5
+                theJikanwari?.days = checkDays(days: daysLabel.text!)
                 if Int(classesTextField.text!) != nil && Int(classesTextField.text!)! >= 0 && Int(classesTextField.text!)! <= 12{
                     theJikanwari?.classes = Int(classesTextField.text!)!
                 }else{
@@ -124,7 +126,7 @@ class SettingTableViewController: UITableViewController {
                 let theClass:jikanwariDetail = jikanwariDetail()
                 
                 theClass.jikanwariName = jikanwariNameTextField.text
-                theClass.days = 5
+                theClass.days = checkDays(days: daysLabel.text!)
                 theClass.classes = Int(classesTextField.text!) ?? 5
                 theClass.initialOrNot = false
                 
@@ -148,7 +150,8 @@ class SettingTableViewController: UITableViewController {
         if exist == true{
             jikanwariNameTextField.text = nowJikanwariData?.jikanwariName
             classesTextField.text = String((nowJikanwariData?.classes)!)
-            daysLabel.text = String((nowJikanwariData?.days)!)
+            daysLabel.text = daysDisplay(days: (nowJikanwariData?.days)!)
+            sumPointsLabel.text = String((nowJikanwariData?.AllPoints)!)
             //nowJikanwariDataがメインに設定されている場合
             if nowJikanwariData?.initialOrNot == true{
                 let MainOrNotCell = super.tableView(tableView, cellForRowAt: IndexPath(row: 0, section: 1))
@@ -180,4 +183,52 @@ class SettingTableViewController: UITableViewController {
         }
     }
 
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "goDays"{
+            if let nextVC = segue.destination as? DaysTableViewController{
+                nextVC.exist = exist
+                if daysLabel.text == "月火水木金"{
+                    nextVC.useDaysHere = 5
+                }else if daysLabel.text == "月火水木金土"{
+                    nextVC.useDaysHere = 6
+                }else if daysLabel.text == "月火水木金土日"{
+                    nextVC.useDaysHere = 7
+                }else{
+                    nextVC.useDaysHere = 5
+                }
+            }
+        }else if segue.identifier == "goAllClassesAndPoints"{
+            if let nextVC = segue.destination as? AllClassesAndPointsTableViewController{
+                print("nowjikanwari:\(nowJikanwariData)")
+                print("nextVC.jikanwari:\(nextVC.nowJikanwariData)")
+                nextVC.nowJikanwariData = nowJikanwariData
+            }
+        }
+    }
+    
+    func daysDisplay(days:Int)->String{
+        if days == 5{
+            return "月火水木金"
+        }else if days == 6{
+            return "月火水木金土"
+        }else if days == 7{
+            return "月火水木金土日"
+        }else{
+            return "error"
+        }
+    }
+    
+    func checkDays(days:String)->Int{
+        if days == "月火水木金"{
+            return 5
+        }else if days == "月火水木金土"{
+            return 6
+        }else if days == "月火水木金土日"{
+            return 7
+        }else{
+            print("error")
+            return 5
+        }
+    }
 }

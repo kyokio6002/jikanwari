@@ -46,6 +46,17 @@ class JikanwarisTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        //print(jikanwariDatas?[indexPath.row].jikanwariModelNum)
+        
+        //print("AllPoints:\((jikanwariDatas?[indexPath.row].AllPoints)!)")
+        //print("getSumPoints:\(getSumPoints(primarykey: (jikanwariDatas?[indexPath.row].jikanwariModelNum)!))")
+        
+        let realm = try! Realm()
+        try! realm.write{
+            jikanwariDatas?[indexPath.row].AllPoints = getSumPoints(primarykey: (jikanwariDatas?[indexPath.row].jikanwariModelNum)!)
+        }
+        
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
         
         
@@ -82,5 +93,38 @@ class JikanwarisTableViewController: UITableViewController {
         let realm = try! Realm()
         jikanwariDatas = realm.objects(jikanwariDetail.self)
         //print(jikanwariDatas)
+    }
+    
+    //総単位数を出す関数
+    func getSumPoints(primarykey:String)->Int{
+        
+        let realm = try! Realm()
+        let theJikanwari = realm.object(ofType: jikanwariDetail.self, forPrimaryKey: primarykey)
+
+        //すべての授業(idが同じのも含む)
+        let allClasses = realm.objects(classModel.self).filter("jikanwariPrimaryKey == %@",theJikanwari?.jikanwariModelNum as Any)
+        var allOriginalClasses:[classModel] = []
+        
+        for i in 0..<allClasses.count{
+            //print("i:\(i)")
+            if allOriginalClasses.count == 0{
+                allOriginalClasses.append(allClasses[i])
+            }else{
+                for_j:for j in 0..<allOriginalClasses.count{
+                    //一致したらiFor文をbreak
+                    //print(i,j)
+                    if allClasses[i].classModelNum == allOriginalClasses[j].classModelNum{
+                        break for_j
+                    }else if j == allOriginalClasses.count - 1{
+                        allOriginalClasses.append(allClasses[i])
+                    }
+                }
+            }
+        }
+        //print("allclasses:\(allClasses)")
+        //print("originalClasses:\(allOriginalClasses)")
+        let allPoints:Int = allOriginalClasses.reduce(0){$0+$1.points}
+        //print(allPoints)
+        return allPoints
     }
 }

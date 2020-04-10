@@ -51,9 +51,10 @@ class DetailsTableViewController: UITableViewController {
         
         //保存ボタンの配置
         self.navigationItem.rightBarButtonItem = saveBarButton
+        
     }
     
-    override func viewDidAppear(_ animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         if selected == false{
             print("--------------------")
             print("selected:\(selected)")
@@ -73,7 +74,7 @@ class DetailsTableViewController: UITableViewController {
             subjectTextField.text = getFromAllClassesVC.subjectName
             roomTextField.text = getFromAllClassesVC.roomNum
             termTextField.text = getFromAllClassesVC.teacherName
-            pointsTextField.text = getFromAllClassesVC.points
+            pointsTextField.text = String(getFromAllClassesVC.points)
         }
     }
     
@@ -182,7 +183,11 @@ class DetailsTableViewController: UITableViewController {
                         classesFromRealm[j].subjectName = self.subjectTextField.text
                         classesFromRealm[j].teacherName = self.teacherTextField.text
                         classesFromRealm[j].roomNum = self.roomTextField.text
-                        classesFromRealm[j].points = self.pointsTextField.text
+                        if let num:Int = Int(self.pointsTextField.text!){
+                            classesFromRealm[j].points = num
+                        }else{
+                            classesFromRealm[j].points = 0
+                        }
                         classesFromRealm[j].memo = self.memo.text
                     }
                 }
@@ -199,7 +204,11 @@ class DetailsTableViewController: UITableViewController {
                     classesFromRealm[0].subjectName = self.subjectTextField.text
                     classesFromRealm[0].teacherName = self.teacherTextField.text
                     classesFromRealm[0].roomNum = self.roomTextField.text
-                    classesFromRealm[0].points = self.pointsTextField.text
+                    if let num:Int = Int(self.pointsTextField.text!){
+                        classesFromRealm[0].points = num
+                    }else{
+                        classesFromRealm[0].points = 0
+                    }
                     classesFromRealm[0].memo = self.memo.text
                 }
             }else if classesFromRealm.count >= 2{
@@ -215,7 +224,11 @@ class DetailsTableViewController: UITableViewController {
                 ClassModel.teacherName = teacherTextField.text
                 ClassModel.roomNum = roomTextField.text
                 ClassModel.classPlace = tag
-                ClassModel.points = pointsTextField.text
+                if let num:Int = Int(self.pointsTextField.text!){
+                    ClassModel.points = num
+                }else{
+                    ClassModel.points = 0
+                }
                 ClassModel.memo = memo.text
                 //クラスのprimaryKeyを代入
                 ClassModel.jikanwariPrimaryKey = nowJikanwari?.jikanwariModelNum
@@ -255,7 +268,7 @@ class DetailsTableViewController: UITableViewController {
                 subjectTextField.text = nowJikanwari?.classDetail[i].subjectName
                 roomTextField.text = nowJikanwari?.classDetail[i].roomNum
                 teacherTextField.text = nowJikanwari?.classDetail[i].teacherName
-                pointsTextField.text = nowJikanwari?.classDetail[i].points
+                pointsTextField.text = String((nowJikanwari?.classDetail[i].points)!)
                 memo.text = nowJikanwari?.classDetail[i].memo
                 //print("exist:\(exist),tag:\(tag)")
                 //print("一致したmodel:\(nowJikanwari?.classDetail[i])")
