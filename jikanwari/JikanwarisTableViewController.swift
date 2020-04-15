@@ -54,7 +54,10 @@ class JikanwarisTableViewController: UITableViewController {
         
         let realm = try! Realm()
         try! realm.write{
-            jikanwariDatas?[indexPath.row].AllPoints = getSumPoints(primarykey: (jikanwariDatas?[indexPath.row].jikanwariModelNum)!)
+            let primaryKey:String = jikanwariDatas?[indexPath.row].jikanwariModelNum ?? ""
+            jikanwariDatas?[indexPath.row].AllPoints = Int(getSumPoints(primarykey: primaryKey,GPAreturn: false))
+            jikanwariDatas?[indexPath.row].GPA = getSumPoints(primarykey: primaryKey, GPAreturn: true)
+            
         }
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
@@ -96,7 +99,7 @@ class JikanwarisTableViewController: UITableViewController {
     }
     
     //総単位数を出す関数
-    func getSumPoints(primarykey:String)->Int{
+    func getSumPoints(primarykey:String,GPAreturn:Bool)->Double{
         
         let realm = try! Realm()
         let theJikanwari = realm.object(ofType: jikanwariDetail.self, forPrimaryKey: primarykey)
@@ -124,7 +127,26 @@ class JikanwarisTableViewController: UITableViewController {
         //print("allclasses:\(allClasses)")
         //print("originalClasses:\(allOriginalClasses)")
         let allPoints:Int = allOriginalClasses.reduce(0){$0+$1.points}
+        
+        var GPA:Int = 0
+        for i in 0..<allOriginalClasses.count{
+            GPA += allOriginalClasses[i].points*allOriginalClasses[i].GPA
+        }
         //print(allPoints)
-        return allPoints
+        if GPAreturn == false{
+            return Double(allPoints)
+        }else{
+            if allPoints == 0{
+                return 0
+            }else{
+                let num:Double = Double(Double(GPA)/Double(allPoints))
+                //print("GPAAll:\(GPA)")
+                //print("allPoints:\(allPoints)")
+                //print("num:\(num)")
+                //print("GPA:\(floor(num*100)/100)")
+                return floor(num*100)/100
+            }
+        }
+        
     }
 }

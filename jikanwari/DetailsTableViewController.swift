@@ -15,8 +15,8 @@ class DetailsTableViewController: UITableViewController {
     @IBOutlet weak var roomTextField: UITextField!
     @IBOutlet weak var teacherTextField: UITextField!
     @IBOutlet weak var pointsTextField: UITextField!
-    @IBOutlet weak var termTextField: UITextField!
-    @IBOutlet weak var colorTextField: UITextField!
+    @IBOutlet weak var GPALabel: UILabel!
+    @IBOutlet weak var colorLabel: UILabel!
     @IBOutlet weak var memo: UITextView!
     
     //押されたボタンのタグを受け取る変数
@@ -29,9 +29,19 @@ class DetailsTableViewController: UITableViewController {
     var selected:Bool = false
     //AllClassesから取ってきたデータ
     var getFromAllClassesVC = classModel()
+    //colorから帰ってきたよ変数
+    var backColor:Bool = false
+    //GPAから帰ってきたよ変数
+    var backGPA:Bool = false
+    //色
+    var color:String = "FFD7B1"
+    //GPA
+    var GPA:Int = 0
     
     //保存ボタン
     var saveBarButton = UIBarButtonItem()
+    
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -52,13 +62,18 @@ class DetailsTableViewController: UITableViewController {
         //保存ボタンの配置
         self.navigationItem.rightBarButtonItem = saveBarButton
         
+        colorLabel.layer.borderWidth = 1.0
+        colorLabel.layer.borderColor = UIColor.lightGray.cgColor
+        colorLabel.layer.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
+        colorLabel.layer.cornerRadius = 20
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        checkExsist(btnTag: tag)
         if selected == false{
             print("--------------------")
             print("selected:\(selected)")
-            checkExsist(btnTag: tag)
             
             //持ってきたらsubjectTextFieldの編集を可能にする
             subjectTextField.isSelected = true
@@ -73,8 +88,9 @@ class DetailsTableViewController: UITableViewController {
             
             subjectTextField.text = getFromAllClassesVC.subjectName
             roomTextField.text = getFromAllClassesVC.roomNum
-            termTextField.text = getFromAllClassesVC.teacherName
+            teacherTextField.text = getFromAllClassesVC.teacherName
             pointsTextField.text = String(getFromAllClassesVC.points)
+            GPALabel.text = String(getFromAllClassesVC.GPA)
         }
     }
     
@@ -97,6 +113,16 @@ class DetailsTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        //GPA選択
+        if indexPath == IndexPath(row: 4, section: 0){
+            print("goGPA:\(GPA)")
+            performSegue(withIdentifier: "goGPA", sender: GPA)
+        }
+        //背景色選択
+        if indexPath == IndexPath(row: 5, section: 0){
+            print("移動")
+            performSegue(withIdentifier: "goColor", sender: color)
+        }
         //既存の授業を選択ボタン
         if indexPath.section == 1 && exist == false{
             performSegue(withIdentifier: "goClasses", sender: nil)
@@ -159,6 +185,21 @@ class DetailsTableViewController: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "goColor"{
+            if let nextVC = segue.destination as? colorTableViewController{
+                let color = (sender as? String)!
+                nextVC.color = color
+            }
+        }
+        else if segue.identifier == "goGPA"{
+            if let nextVC = segue.destination as? GPATableViewController{
+                let GPA:Int = (sender as? Int ?? 0)
+                nextVC.GPA = GPA
+            }
+        }
+    }
+    
     @objc func saveBarButtonTapped(_ sender:UIBarButtonItem){
         print("保存ボタンが押されました")
         
@@ -188,6 +229,8 @@ class DetailsTableViewController: UITableViewController {
                         }else{
                             classesFromRealm[j].points = 0
                         }
+                        classesFromRealm[j].GPA = Int(self.GPALabel.text!) ?? 0
+                        classesFromRealm[j].coler = self.color
                         classesFromRealm[j].memo = self.memo.text
                     }
                 }
@@ -209,6 +252,8 @@ class DetailsTableViewController: UITableViewController {
                     }else{
                         classesFromRealm[0].points = 0
                     }
+                    classesFromRealm[0].GPA = Int(self.GPALabel.text!) ?? 0
+                    classesFromRealm[0].coler = self.color
                     classesFromRealm[0].memo = self.memo.text
                 }
             }else if classesFromRealm.count >= 2{
@@ -229,6 +274,8 @@ class DetailsTableViewController: UITableViewController {
                 }else{
                     ClassModel.points = 0
                 }
+                ClassModel.GPA = Int(self.GPALabel.text!) ?? 0
+                ClassModel.coler = color
                 ClassModel.memo = memo.text
                 //クラスのprimaryKeyを代入
                 ClassModel.jikanwariPrimaryKey = nowJikanwari?.jikanwariModelNum
@@ -262,6 +309,16 @@ class DetailsTableViewController: UITableViewController {
         deleteCell.textLabel?.textAlignment = .center
         deleteCell.textLabel?.textColor = .lightGray
         
+        subjectTextField.placeholder = "教科名を入力してください"
+        roomTextField.placeholder = "教室を入力してください"
+        teacherTextField.placeholder = "教師の名前を入力してください"
+        pointsTextField.placeholder = "単位数を入力してください"
+        //countが0だとfor文に入らないからその時用に初期値設定
+        colorLabel.layer.backgroundColor = UIColor.hex(string: color, alpha: 1.0).cgColor
+        //countが0だとfor文に入らないからその時用に初期値設定
+        GPALabel.text = String(GPA)
+        
+        
         for i in 0..<(nowJikanwari?.classDetail.count)!{
             //データがあった場合の処理
             if nowJikanwari?.classDetail[i].classPlace == btnTag{
@@ -269,6 +326,28 @@ class DetailsTableViewController: UITableViewController {
                 roomTextField.text = nowJikanwari?.classDetail[i].roomNum
                 teacherTextField.text = nowJikanwari?.classDetail[i].teacherName
                 pointsTextField.text = String((nowJikanwari?.classDetail[i].points)!)
+                if backGPA == false{
+                    if let nonOptionalGPA:Int = nowJikanwari?.classDetail[i].GPA{
+                        GPA = nonOptionalGPA
+                        GPALabel.text = String(nonOptionalGPA)
+                    }else{
+                        GPA = 0
+                        GPALabel.text = String(GPA)
+                    }
+                }else{
+                    GPALabel.text = String(GPA)
+                }
+                if backColor == false{
+                    if let nonOptionalColor:String = nowJikanwari?.classDetail[i].coler{
+                        colorLabel.layer.backgroundColor = UIColor.hex(string:nonOptionalColor, alpha: 1.0).cgColor
+                    }else{
+                        color = "FFD7B1"
+                        colorLabel.layer.backgroundColor = UIColor.hex(string:color, alpha: 1.0).cgColor
+                    }
+                }else{
+                    colorLabel.layer.backgroundColor = UIColor.hex(string:color, alpha: 1.0).cgColor
+                }
+                
                 memo.text = nowJikanwari?.classDetail[i].memo
                 //print("exist:\(exist),tag:\(tag)")
                 //print("一致したmodel:\(nowJikanwari?.classDetail[i])")
@@ -276,11 +355,23 @@ class DetailsTableViewController: UITableViewController {
                 deleteCell.textLabel?.textColor = .red
                 break
             }else{
-                subjectTextField.placeholder = "教科名を入力してください"
-                roomTextField.placeholder = "教室を入力してください"
-                teacherTextField.placeholder = "教師の名前を入力してください"
-                pointsTextField.placeholder = "単位数を入力してください"
+                print("更新はなし")
             }
+        }
+    }
+}
+extension UIColor {
+    class func hex ( string : String, alpha : CGFloat) -> UIColor {
+        let string_ = string.replacingOccurrences(of: "#", with: "")
+        let scanner = Scanner(string: string_ as String)
+        var color: UInt64 = 0
+        if scanner.scanHexInt64(&color) {
+            let r = CGFloat((color & 0xFF0000) >> 16) / 255.0
+            let g = CGFloat((color & 0x00FF00) >> 8) / 255.0
+            let b = CGFloat(color & 0x0000FF) / 255.0
+            return UIColor(red:r,green:g,blue:b,alpha:alpha)
+        } else {
+            return UIColor.white;
         }
     }
 }

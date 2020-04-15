@@ -16,6 +16,7 @@ class classModel: Object {
     @objc dynamic var roomNum:String? = nil
     @objc dynamic var teacherName:String? = nil
     @objc dynamic var points:Int = 0
+    @objc dynamic var GPA:Int = 0
     @objc dynamic var coler:String? = nil
     @objc dynamic var memo:String? = nil
     @objc dynamic var jikanwariPrimaryKey:String? = nil

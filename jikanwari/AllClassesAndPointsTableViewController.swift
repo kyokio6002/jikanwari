@@ -18,7 +18,7 @@ class AllClassesAndPointsTableViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        //print("nowJIkanwari:\(nowJikanwariData)")
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -49,7 +49,7 @@ class AllClassesAndPointsTableViewController: UITableViewController {
                 }
             }
         }
-        
+        print("allOriginal:\(allOriginalClasses)")
         return allOriginalClasses.count
     }
 
