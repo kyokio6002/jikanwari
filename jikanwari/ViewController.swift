@@ -21,10 +21,18 @@ class ViewController: UIViewController {
     //scrollView
     @IBOutlet weak var scrollView: UIScrollView!
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         //データの保存先のURLの表示(Realm)
         print(Realm.Configuration.defaultConfiguration.fileURL!)
+        //最初にスクロールバーを表示
+        scrollView.flashScrollIndicators()
+        
+        //常に縦方向にbounce
+        scrollView.alwaysBounceVertical = true
+        //常に横方向にbounceしない(縦固定画面にするから)
+        scrollView.alwaysBounceHorizontal = false
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -50,7 +58,7 @@ class ViewController: UIViewController {
         let plusY = 1
         
         //ステータスバーとナビゲーションバーの高さを取得
-        let statusbarHeight:CGFloat = UIApplication.shared.statusBarFrame.height
+        let statusbarHeight:CGFloat = view.window?.windowScene?.statusBarManager?.statusBarFrame.height ?? 0
         let navigationBarHeight:CGFloat = (self.navigationController?.navigationBar.frame.size.height)!
         //縦横幅の合計(の初期値)
         var SumX:CGFloat = 0
@@ -87,7 +95,7 @@ class ViewController: UIViewController {
             for x in 0..<dayCount+dayDisp+plusY{
                 let btn = UIButton()
                 btn.backgroundColor = .white
-                btn.layer.borderColor = UIColor.black.cgColor
+                btn.layer.borderColor = UIColor.lightGray.cgColor
                 btn.layer.borderWidth = 1.0
                 btn.layer.cornerRadius = 0.5
                 
@@ -168,6 +176,7 @@ class ViewController: UIViewController {
                                 btn.titleLabel?.textAlignment = .center
                                 btn.titleLabel?.adjustsFontForContentSizeCategory = true
                                 btn.setTitle("\(nowSubject)\n\(nowRoom)", for: .normal)
+                                btn.backgroundColor = UIColor.hex(string: jikanwariData.classDetail[i].coler ?? "FFD7B1", alpha: 1.0)
                             }
                         }
                         contentsView.addSubview(btn)
@@ -206,6 +215,14 @@ class ViewController: UIViewController {
         }else if theJikanwari == nil{
             removeBtns()
             print("時間割データがありません")
+            let alert = UIAlertController(title: "時間割がありません", message: "時間割を登録しますか？", preferredStyle: .alert)
+            let ok = UIAlertAction(title: "OK", style: .default) { (UIAlertAction) in
+                self.performSegue(withIdentifier: "goSettingJikanwari", sender: nil)
+            }
+            let cancel = UIAlertAction(title: "cancel", style: .cancel, handler: nil)
+            alert.addAction(ok)
+            alert.addAction(cancel)
+            present(alert,animated: true,completion: nil)
         }
         
     }

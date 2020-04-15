@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		612E2FC524FB64F03CBE0FD8 /* Pods_jikanwari.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B5F309ACC9791408926CD3A /* Pods_jikanwari.framework */; };
+		A8322D6D2445E69500E150A3 /* Pods_jikanwari.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B5F309ACC9791408926CD3A /* Pods_jikanwari.framework */; };
 		A8493FB9242FA5E100B28023 /* AllClassesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8493FB8242FA5E100B28023 /* AllClassesTableViewController.swift */; };
 		A84F906F241A1AA80072F438 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A84F906E241A1AA80072F438 /* AppDelegate.swift */; };
 		A84F9071241A1AA80072F438 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A84F9070241A1AA80072F438 /* ViewController.swift */; };
@@ -18,14 +18,19 @@
 		A85023D9242B53BF0004F16A /* jikanwariDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = A85023D8242B53BF0004F16A /* jikanwariDetail.swift */; };
 		A85023DB242B9BB30004F16A /* JikanwarisTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A85023DA242B9BB30004F16A /* JikanwarisTableViewController.swift */; };
 		A859636424405A1000C20549 /* AllClassesAndPointsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A859636324405A1000C20549 /* AllClassesAndPointsTableViewController.swift */; };
+		A85963662440B29E00C20549 /* colorTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A85963652440B29E00C20549 /* colorTableViewController.swift */; };
 		A859D790241F419600FF789D /* DetailsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A859D78F241F419600FF789D /* DetailsTableViewController.swift */; };
 		A859D792241F57E000FF789D /* classModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A859D791241F57E000FF789D /* classModel.swift */; };
+		A85C9DF5244433A10081BEAF /* GPATableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A85C9DF4244433A10081BEAF /* GPATableViewController.swift */; };
+		A85C9DF924445DCB0081BEAF /* AllGPAViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A85C9DF824445DCB0081BEAF /* AllGPAViewController.swift */; };
 		A8927D1F243B1A4E00C1E175 /* DaysTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8927D1E243B1A4E00C1E175 /* DaysTableViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		5B5F309ACC9791408926CD3A /* Pods_jikanwari.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_jikanwari.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6AB8FB33203055D257996F43 /* Pods-jikanwari.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-jikanwari.debug.xcconfig"; path = "Target Support Files/Pods-jikanwari/Pods-jikanwari.debug.xcconfig"; sourceTree = "<group>"; };
+		A8322D702445E89600E150A3 /* Realm.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Realm.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A8322D742445E89B00E150A3 /* RealmSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RealmSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8493FB8242FA5E100B28023 /* AllClassesTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllClassesTableViewController.swift; sourceTree = "<group>"; };
 		A84F906B241A1AA80072F438 /* jikanwari.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = jikanwari.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A84F906E241A1AA80072F438 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -38,8 +43,11 @@
 		A85023D8242B53BF0004F16A /* jikanwariDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = jikanwariDetail.swift; sourceTree = "<group>"; };
 		A85023DA242B9BB30004F16A /* JikanwarisTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JikanwarisTableViewController.swift; sourceTree = "<group>"; };
 		A859636324405A1000C20549 /* AllClassesAndPointsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllClassesAndPointsTableViewController.swift; sourceTree = "<group>"; };
+		A85963652440B29E00C20549 /* colorTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = colorTableViewController.swift; sourceTree = "<group>"; };
 		A859D78F241F419600FF789D /* DetailsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailsTableViewController.swift; sourceTree = "<group>"; };
 		A859D791241F57E000FF789D /* classModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = classModel.swift; sourceTree = "<group>"; };
+		A85C9DF4244433A10081BEAF /* GPATableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GPATableViewController.swift; sourceTree = "<group>"; };
+		A85C9DF824445DCB0081BEAF /* AllGPAViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllGPAViewController.swift; sourceTree = "<group>"; };
 		A8927D1E243B1A4E00C1E175 /* DaysTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaysTableViewController.swift; sourceTree = "<group>"; };
 		D63A7813D40C03D44E9CBAFD /* Pods-jikanwari.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-jikanwari.release.xcconfig"; path = "Target Support Files/Pods-jikanwari/Pods-jikanwari.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -49,7 +57,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				612E2FC524FB64F03CBE0FD8 /* Pods_jikanwari.framework in Frameworks */,
+				A8322D6D2445E69500E150A3 /* Pods_jikanwari.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -81,10 +89,13 @@
 				A84F9070241A1AA80072F438 /* ViewController.swift */,
 				A859D78F241F419600FF789D /* DetailsTableViewController.swift */,
 				A8493FB8242FA5E100B28023 /* AllClassesTableViewController.swift */,
+				A85C9DF4244433A10081BEAF /* GPATableViewController.swift */,
+				A85963652440B29E00C20549 /* colorTableViewController.swift */,
 				A85023DA242B9BB30004F16A /* JikanwarisTableViewController.swift */,
 				A85023D3242B425B0004F16A /* SettingTableViewController.swift */,
 				A8927D1E243B1A4E00C1E175 /* DaysTableViewController.swift */,
 				A859636324405A1000C20549 /* AllClassesAndPointsTableViewController.swift */,
+				A85C9DF824445DCB0081BEAF /* AllGPAViewController.swift */,
 				A859D791241F57E000FF789D /* classModel.swift */,
 				A85023D8242B53BF0004F16A /* jikanwariDetail.swift */,
 				A84F9072241A1AA80072F438 /* Main.storyboard */,
@@ -107,6 +118,8 @@
 		D18324EC15BC55BCA705A0A3 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A8322D742445E89B00E150A3 /* RealmSwift.framework */,
+				A8322D702445E89600E150A3 /* Realm.framework */,
 				5B5F309ACC9791408926CD3A /* Pods_jikanwari.framework */,
 			);
 			name = Frameworks;
@@ -230,13 +243,16 @@
 				A84F9071241A1AA80072F438 /* ViewController.swift in Sources */,
 				A85023DB242B9BB30004F16A /* JikanwarisTableViewController.swift in Sources */,
 				A859D790241F419600FF789D /* DetailsTableViewController.swift in Sources */,
+				A85963662440B29E00C20549 /* colorTableViewController.swift in Sources */,
 				A859636424405A1000C20549 /* AllClassesAndPointsTableViewController.swift in Sources */,
 				A859D792241F57E000FF789D /* classModel.swift in Sources */,
+				A85C9DF5244433A10081BEAF /* GPATableViewController.swift in Sources */,
 				A8493FB9242FA5E100B28023 /* AllClassesTableViewController.swift in Sources */,
 				A8927D1F243B1A4E00C1E175 /* DaysTableViewController.swift in Sources */,
 				A85023D9242B53BF0004F16A /* jikanwariDetail.swift in Sources */,
 				A84F906F241A1AA80072F438 /* AppDelegate.swift in Sources */,
 				A85023D4242B425B0004F16A /* SettingTableViewController.swift in Sources */,
+				A85C9DF924445DCB0081BEAF /* AllGPAViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -386,6 +402,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 59HC8WP97A;
 				INFOPLIST_FILE = jikanwari/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -393,7 +410,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.example.jikanwari;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -405,6 +422,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 59HC8WP97A;
 				INFOPLIST_FILE = jikanwari/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -412,7 +430,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.example.jikanwari;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};

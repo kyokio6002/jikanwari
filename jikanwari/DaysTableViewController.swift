@@ -22,9 +22,7 @@ class DaysTableViewController: UITableViewController {
         //単一選択
         tableView.allowsMultipleSelection = false
     }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        
+    override func viewWillLayoutSubviews() {
         checkCell(exist: exist, days: useDaysHere)
     }
     
@@ -64,7 +62,7 @@ class DaysTableViewController: UITableViewController {
             print("ここよ01")
             tableView.deselectRow(at: indexPath, animated: true)
             let cell = tableView.cellForRow(at:IndexPath(row: 0, section: 0))
-            print(cell?.textLabel?.text)
+            //print(cell?.textLabel?.text)
             cell?.accessoryType = .none
             
             reload(indexPath: indexPath)
@@ -72,7 +70,7 @@ class DaysTableViewController: UITableViewController {
             print("ここよ02")
             tableView.deselectRow(at: indexPath, animated: true)
             let cell = tableView.cellForRow(at:IndexPath(row: 1, section: 0))
-            print(cell?.textLabel?.text)
+            //print(cell?.textLabel?.text)
             cell?.accessoryType = .none
             
             reload(indexPath: indexPath)
@@ -80,7 +78,7 @@ class DaysTableViewController: UITableViewController {
             print("ここよ03")
             tableView.deselectRow(at: indexPath, animated: true)
             let cell = tableView.cellForRow(at:IndexPath(row: 2, section: 0))
-            print(cell?.textLabel?.text)
+            //print(cell?.textLabel?.text)
             cell?.accessoryType = .none
             
             reload(indexPath: indexPath)

@@ -17,6 +17,8 @@ class SettingTableViewController: UITableViewController {
     var exist:Bool = false
     //既存の場合のプライマリーキー
     var nowJikanwariData:jikanwariDetail?
+    //既存の時間割データが0の場合にinital=trueに設定するための変数
+    var caseNoJikanwariInit:Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,6 +35,7 @@ class SettingTableViewController: UITableViewController {
     @IBOutlet weak var classesTextField: UITextField!
     @IBOutlet weak var daysLabel: UILabel!
     @IBOutlet weak var sumPointsLabel: UILabel!
+    @IBOutlet weak var SumGPALabel: UILabel!
     
     
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -42,7 +45,7 @@ class SettingTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0:
-            return 4
+            return 5
         case 1:
             return 1
         case 2:
@@ -61,8 +64,15 @@ class SettingTableViewController: UITableViewController {
         if indexPath.section == 0{
             if indexPath.row == 2{
                 performSegue(withIdentifier: "goDays", sender: nil)
-            }else if indexPath.row == 3{
-                performSegue(withIdentifier: "goAllClassesAndPoints", sender: nil)
+            }else if indexPath.row == 3 && self.exist == true{
+                if nowJikanwariData != nil{
+                    performSegue(withIdentifier: "goAllClassesAndPoints", sender: nil)
+                }else{
+                    print("error")
+                }
+                tableView.deselectRow(at: indexPath, animated: true)
+            }else if indexPath.row == 4 && self.exist == true{
+                performSegue(withIdentifier: "goAllGPA", sender: nil)
             }
         }else if indexPath.section == 1{
             if nowJikanwariData?.initialOrNot == true{
@@ -89,6 +99,17 @@ class SettingTableViewController: UITableViewController {
             let ok = UIAlertAction(title: "消去", style: .default) { (UIAlertAction) in
                 let realm = try! Realm()
                 let deleteJikanwari = realm.object(ofType: jikanwariDetail.self, forPrimaryKey: self.nowJikanwariData?.jikanwariModelNum)
+                //もし消去される時間割がinit==trueだった場合に違う時間割をinit=trueにする
+                if deleteJikanwari?.initialOrNot == true{
+                    //print("入ったよ:\(deleteJikanwari?.jikanwariModelNum)")
+                    let modelId:String = deleteJikanwari!.jikanwariModelNum
+                    print(modelId)
+                    let elseTheJikanwari:jikanwariDetail = realm.objects(jikanwariDetail.self).filter("jikanwariModelNum != %@",modelId).first!
+                    try! realm.write{
+                        elseTheJikanwari.initialOrNot = true
+                    }
+                    print("elseTheJikanwari:\(elseTheJikanwari)")
+                }
                 try! realm.write{
                     realm.delete(deleteJikanwari!.classDetail)
                     realm.delete(deleteJikanwari!)
@@ -128,7 +149,11 @@ class SettingTableViewController: UITableViewController {
                 theClass.jikanwariName = jikanwariNameTextField.text
                 theClass.days = checkDays(days: daysLabel.text!)
                 theClass.classes = Int(classesTextField.text!) ?? 5
-                theClass.initialOrNot = false
+                if caseNoJikanwariInit == true{
+                    theClass.initialOrNot = true
+                }else{
+                    theClass.initialOrNot = false
+                }
                 
                 try! realm.write{
                     realm.add(theClass)
@@ -152,6 +177,12 @@ class SettingTableViewController: UITableViewController {
             classesTextField.text = String((nowJikanwariData?.classes)!)
             daysLabel.text = daysDisplay(days: (nowJikanwariData?.days)!)
             sumPointsLabel.text = String((nowJikanwariData?.AllPoints)!)
+            if nowJikanwariData?.GPA != 0.0{
+                SumGPALabel.text = String((nowJikanwariData?.GPA)!)
+            }else{
+                SumGPALabel.text = "0"
+            }
+            
             //nowJikanwariDataがメインに設定されている場合
             if nowJikanwariData?.initialOrNot == true{
                 let MainOrNotCell = super.tableView(tableView, cellForRowAt: IndexPath(row: 0, section: 1))
@@ -170,14 +201,22 @@ class SettingTableViewController: UITableViewController {
             DeletCell.textLabel?.textColor = .red
         }else if exist == false{
             let MainOrNotCell = super.tableView(tableView, cellForRowAt: IndexPath(row: 0, section: 1))
-            MainOrNotCell.textLabel?.text = "この時間割をメインに設定する"
+            MainOrNotCell.textLabel?.text = "一度保存しないとメインに設定できません"
             MainOrNotCell.textLabel?.textAlignment = .center
-            MainOrNotCell.textLabel?.textColor = .red
+            MainOrNotCell.textLabel?.textColor = .lightGray
             
             let DeletCell = super.tableView(tableView,cellForRowAt: IndexPath(row: 0, section: 3))
             DeletCell.textLabel?.text = "時間割が登録されていません"
             DeletCell.textLabel?.textAlignment = .center
             DeletCell.textLabel?.textColor = .lightGray
+            
+            let realm = try! Realm()
+            //時間割データが0の場合
+            if realm.objects(jikanwariDetail.self).count == 0{
+                MainOrNotCell.textLabel?.text = "この時間割はメインに設定されます"
+                MainOrNotCell.textLabel?.textColor =  .lightGray
+                caseNoJikanwariInit = true
+            }
         }else{
             print("error")
         }
@@ -200,8 +239,12 @@ class SettingTableViewController: UITableViewController {
             }
         }else if segue.identifier == "goAllClassesAndPoints"{
             if let nextVC = segue.destination as? AllClassesAndPointsTableViewController{
-                print("nowjikanwari:\(nowJikanwariData)")
-                print("nextVC.jikanwari:\(nextVC.nowJikanwariData)")
+                //print("nowjikanwari:\(nowJikanwariData)")
+                //print("nextVC.jikanwari:\(nextVC.nowJikanwariData)")
+                nextVC.nowJikanwariData = nowJikanwariData
+            }
+        }else if segue.identifier == "goAllGPA"{
+            if let nextVC = segue.destination as? AllGPAViewController{
                 nextVC.nowJikanwariData = nowJikanwariData
             }
         }
