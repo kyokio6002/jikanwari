@@ -75,22 +75,45 @@ class DetailsTableViewController: UITableViewController {
             print("--------------------")
             print("selected:\(selected)")
             
-            //持ってきたらsubjectTextFieldの編集を可能にする
+            //持ってきたらTextFieldの編集を可能にする
             subjectTextField.isSelected = true
             subjectTextField.isEnabled = true
+            roomTextField.isSelected = true
+            roomTextField.isEnabled = true
+            teacherTextField.isSelected = true
+            teacherTextField.isEnabled = true
+            pointsTextField.isSelected = true
+            pointsTextField.isEnabled = true
+            memo.isSelectable = true
+            memo.isEditable = true
             
         }else{
             print("--------------------")
             print("selected:\(selected)")
-            //持ってきたらsubjectTextFieldの編集を不可能にする
+            //持ってきたらTextFieldの編集を不可能にする
             subjectTextField.isSelected = false
             subjectTextField.isEnabled = false
+            roomTextField.isSelected = false
+            roomTextField.isEnabled = false
+            teacherTextField.isSelected = false
+            teacherTextField.isEnabled = false
+            pointsTextField.isSelected = false
+            pointsTextField.isEnabled = false
+            memo.isSelectable = false
+            memo.isEditable = false
             
             subjectTextField.text = getFromAllClassesVC.subjectName
             roomTextField.text = getFromAllClassesVC.roomNum
             teacherTextField.text = getFromAllClassesVC.teacherName
             pointsTextField.text = String(getFromAllClassesVC.points)
             GPALabel.text = String(getFromAllClassesVC.GPA)
+            if let nonOptinalColor:String = getFromAllClassesVC.coler{
+                color = nonOptinalColor
+                colorLabel.layer.backgroundColor = UIColor.hex(string: color, alpha: 1.0).cgColor
+            }else{
+                print("error")
+            }
+            memo.text = getFromAllClassesVC.memo
         }
     }
     
@@ -114,12 +137,12 @@ class DetailsTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         //GPA選択
-        if indexPath == IndexPath(row: 4, section: 0){
+        if indexPath == IndexPath(row: 4, section: 0) && selected == false{
             print("goGPA:\(GPA)")
             performSegue(withIdentifier: "goGPA", sender: GPA)
         }
         //背景色選択
-        if indexPath == IndexPath(row: 5, section: 0){
+        if indexPath == IndexPath(row: 5, section: 0) && selected == false{
             print("移動")
             performSegue(withIdentifier: "goColor", sender: color)
         }
@@ -139,8 +162,8 @@ class DetailsTableViewController: UITableViewController {
             let classesFromRealm = realm.objects(classModel.self).filter("classModelNum == %@",selectedClassId as Any)
             print("classes:\(classesFromRealm)")
             
-            let alert = UIAlertController(title: "他のクラス情報も消去されます", message: "他も消去されるよ？", preferredStyle: .alert)
-            let delete = UIAlertAction(title: "消去", style: .default) { (UIAlertAction) in
+            let alert = UIAlertController(title: "他の授業も消去されますがよろしいですか？", message: "この授業は複数存在します", preferredStyle: .alert)
+            let deleteAll = UIAlertAction(title: "すべて消去", style: .destructive) { (UIAlertAction) in
                 
                 for _ in 0..<classesFromRealm.count{
                     try! realm.write{
@@ -150,8 +173,27 @@ class DetailsTableViewController: UITableViewController {
                 //元の画面に戻る
                 self.navigationController?.popToRootViewController(animated: true)
             }
+            let deleteOne = UIAlertAction(title: "この授業のみ消去", style: .destructive) { (UIAlertAction) in
+                //オプショナルバインディング
+                if let nonOptionalJikanwariName = self.nowJikanwari?.jikanwariModelNum{
+                    //print("nonOp:\(nonOptionalJikanwariName)")
+                    //print("tag:\(self.tag)")
+                    //授業を特定
+                    let theClass = classesFromRealm.filter("jikanwariPrimaryKey == %@ AND classPlace == %@",nonOptionalJikanwariName,self.tag)
+                    //print("theclass:\(theClass)")
+                    //消去
+                    try! realm.write{
+                        realm.delete(theClass)
+                    }
+                    //元の画面に戻る
+                    self.navigationController?.popToRootViewController(animated: true)
+                }else{
+                    print("error")
+                }
+            }
             let cancel = UIAlertAction(title: "cancel", style: .cancel, handler: nil)
-            alert.addAction(delete)
+            alert.addAction(deleteOne)
+            alert.addAction(deleteAll)
             alert.addAction(cancel)
             
             //変更するclassの数によって場合わけ
@@ -166,10 +208,10 @@ class DetailsTableViewController: UITableViewController {
             }
         }
         //データを持ってきたのにsubjectTextFieldを変更しようとした場合の処理
-        if indexPath == IndexPath(row: 0, section: 0) && selected == true{
+        if indexPath.section == 0 && selected == true{
             //alertを表示
-            let alert = UIAlertController(title: "既存の授業データです", message: "既存のデータだから授業名は変更できないよ", preferredStyle: .alert)
-            let addNewOneAlert = UIAlertAction(title: "新規登録", style: .default) { (UIAlertAction) in
+            let alert = UIAlertController(title: "変更できません", message: "既存の授業を使用しいています", preferredStyle: .alert)
+            let addNewOneAlert = UIAlertAction(title: "新規で登録", style: .default) { (UIAlertAction) in
                 //selectedを外す
                 self.selected = false
                 //subjectTextFieldの編集を可能にする
@@ -216,7 +258,7 @@ class DetailsTableViewController: UITableViewController {
             let classesFromRealm = realm.objects(classModel.self).filter("classModelNum == %@",selectedClassId as Any)
             print("classes:\(classesFromRealm)")
             
-            let alert = UIAlertController(title: "他のクラス情報も変更されます", message: "他も変更されるよ？", preferredStyle: .alert)
+            let alert = UIAlertController(title: "他の授業も変更されますがよろしいですか？", message: "この授業は複数存在します", preferredStyle: .alert)
             let ok = UIAlertAction(title: "OK", style: .default) { (UIAlertAction) in
                 
                 for j in 0..<classesFromRealm.count{
@@ -238,6 +280,7 @@ class DetailsTableViewController: UITableViewController {
                 self.navigationController?.popToRootViewController(animated: true)
             }
             let cancel = UIAlertAction(title: "cancel", style: .cancel, handler: nil)
+            //alert.addAction(deleteOne)
             alert.addAction(ok)
             alert.addAction(cancel)
             
@@ -292,6 +335,7 @@ class DetailsTableViewController: UITableViewController {
             }
             
         }
+        print("color00:\(color)")
         //元の画面に戻る
         self.navigationController?.popToRootViewController(animated: true)
     }
@@ -339,6 +383,7 @@ class DetailsTableViewController: UITableViewController {
                 }
                 if backColor == false{
                     if let nonOptionalColor:String = nowJikanwari?.classDetail[i].coler{
+                        color = nonOptionalColor
                         colorLabel.layer.backgroundColor = UIColor.hex(string:nonOptionalColor, alpha: 1.0).cgColor
                     }else{
                         color = "FFD7B1"

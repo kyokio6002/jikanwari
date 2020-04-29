@@ -20,7 +20,10 @@ class ViewController: UIViewController {
     
     //scrollView
     @IBOutlet weak var scrollView: UIScrollView!
-    
+    //backGroundimageView
+    @IBOutlet weak var imageView: UIImageView!
+    //画像が存在するか変数
+    var existImage:Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,14 +36,17 @@ class ViewController: UIViewController {
         scrollView.alwaysBounceVertical = true
         //常に横方向にbounceしない(縦固定画面にするから)
         scrollView.alwaysBounceHorizontal = false
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
+        print("現在の時間り:\(nowJikanwari)")
         //scrollViewを設置
         configureSV()
+        
         //title設置
         navigationItem.title = nowJikanwari?.jikanwariName
-        //print("現在の時間り:\(nowJikanwari!)")
+        
     }
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -62,7 +68,9 @@ class ViewController: UIViewController {
         let navigationBarHeight:CGFloat = (self.navigationController?.navigationBar.frame.size.height)!
         //縦横幅の合計(の初期値)
         var SumX:CGFloat = 0
-        var SumY:CGFloat = 0
+        var SumY:CGFloat = 3
+        //合計の高さ出すときのsumYの初期値分
+        let initSumY = SumY
         //ボタンのxy座標
         var btnX:CGFloat = 0
         var btnY:CGFloat = 0
@@ -80,7 +88,7 @@ class ViewController: UIViewController {
         let contentsView = UIView()
         //contentsViewのheight
         var height:CGFloat = 0
-        let jikanwariHeight = spaceWidth*CGFloat(classCount+2)+classAxisHeight*CGFloat(classCount) + classAxisWidth_dayAxisHeight
+        let jikanwariHeight = spaceWidth*CGFloat(classCount+2)+classAxisHeight*CGFloat(classCount) + classAxisWidth_dayAxisHeight + initSumY
         if jikanwariHeight >= (screenHeight - statusbarHeight - navigationBarHeight){
             height = jikanwariHeight
         }else{
@@ -159,7 +167,12 @@ class ViewController: UIViewController {
                         //縦横幅合計更新(SumYの更新はなし)
                         SumX += btn.frame.width + spaceWidth
                         btn.addTarget(self, action: #selector(btnTapped(sender:)), for: .touchUpInside)
-                        
+                        //背景画像があるあるかないかでbtnの背景色を決める
+                        if existImage == true{
+                            btn.backgroundColor = .clear
+                        }else{
+                            btn.backgroundColor = .lightGray
+                        }
                         for i in 0..<jikanwariData.classDetail.count{
                             if jikanwariData.classDetail[i].classPlace == btn.tag{
                                 //print("一致あり01:\(btn.tag)")
@@ -177,6 +190,9 @@ class ViewController: UIViewController {
                                 btn.titleLabel?.adjustsFontForContentSizeCategory = true
                                 btn.setTitle("\(nowSubject)\n\(nowRoom)", for: .normal)
                                 btn.backgroundColor = UIColor.hex(string: jikanwariData.classDetail[i].coler ?? "FFD7B1", alpha: 1.0)
+                                //print("color11:\(jikanwariData.classDetail[i].coler)")
+                                break
+                            }else{
                             }
                         }
                         contentsView.addSubview(btn)
@@ -190,18 +206,30 @@ class ViewController: UIViewController {
                 }
             }
         }
-        contentsView.backgroundColor = .red
+        //透かす
+        contentsView.backgroundColor = .clear
         return contentsView
     }
     
     //scrollViewにcontentsViewを貼り付けてつける
     func configureSV(){
+
         
         let realm = try! Realm()
         let initialIsTrue = true
         let theJikanwari:jikanwariDetail? = realm.objects(jikanwariDetail.self).filter("initialOrNot == %@",initialIsTrue).first
         
         if let nonOptionaltheJikanwari = theJikanwari{
+            nowJikanwari = theJikanwari
+            //背景画像セット
+            if let nonOptinalImage:Data = nowJikanwari?.ImageData{
+                imageView.image = UIImage(data: nonOptinalImage)
+                //背景画像があることを知らせる
+                existImage = true
+            }else{
+                existImage = false
+                imageView.image = nil
+            }
             //print("時間割あるよ")
             //scrollViewにcontentsViewを配置させる
             let subView = setButtons(dayCount: nonOptionaltheJikanwari.days, classCount: nonOptionaltheJikanwari.classes,jikanwariData: nonOptionaltheJikanwari)
@@ -209,7 +237,6 @@ class ViewController: UIViewController {
             scrollView.addSubview(subView)
             //scrollViewにcontentsViewのサイズを教える
             scrollView.contentSize = subView.frame.size
-            nowJikanwari = theJikanwari
             //print("contentsView:\(subView.frame)")
             //print("scrollView:\(scrollView.frame)")
         }else if theJikanwari == nil{
@@ -222,9 +249,9 @@ class ViewController: UIViewController {
             let cancel = UIAlertAction(title: "cancel", style: .cancel, handler: nil)
             alert.addAction(ok)
             alert.addAction(cancel)
+            //このpresentがエラーの元
             present(alert,animated: true,completion: nil)
         }
-        
     }
     
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////

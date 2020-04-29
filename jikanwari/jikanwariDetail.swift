@@ -17,6 +17,7 @@ class jikanwariDetail: Object{
     @objc dynamic var initialOrNot:Bool = false
     @objc dynamic var AllPoints:Int = 0
     @objc dynamic var GPA:Double = 0
+    @objc dynamic var ImageData:Data? = nil
     
     override static func primaryKey() -> String?{
         return "jikanwariModelNum"
