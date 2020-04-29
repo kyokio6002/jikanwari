@@ -20,6 +20,9 @@ class SettingTableViewController: UITableViewController {
     //既存の時間割データが0の場合にinital=trueに設定するための変数
     var caseNoJikanwariInit:Bool = false
     
+    @IBOutlet weak var displayImage: UIImageView!
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -100,7 +103,7 @@ class SettingTableViewController: UITableViewController {
                 let realm = try! Realm()
                 let deleteJikanwari = realm.object(ofType: jikanwariDetail.self, forPrimaryKey: self.nowJikanwariData?.jikanwariModelNum)
                 //もし消去される時間割がinit==trueだった場合に違う時間割をinit=trueにする
-                if deleteJikanwari?.initialOrNot == true{
+                if deleteJikanwari?.initialOrNot == true && realm.objects(jikanwariDetail.self).count != 1{
                     //print("入ったよ:\(deleteJikanwari?.jikanwariModelNum)")
                     let modelId:String = deleteJikanwari!.jikanwariModelNum
                     print(modelId)
@@ -111,6 +114,12 @@ class SettingTableViewController: UITableViewController {
                     print("elseTheJikanwari:\(elseTheJikanwari)")
                 }
                 try! realm.write{
+                    if realm.objects(jikanwariDetail.self).count == 1{
+                        let previousNC = self.navigationController!
+                        let previousVC = previousNC.viewControllers[previousNC.viewControllers.count - 3] as! ViewController
+                        previousVC.nowJikanwari = nil
+                        self.navigationController?.popToRootViewController(animated: true)
+                    }
                     realm.delete(deleteJikanwari!.classDetail)
                     realm.delete(deleteJikanwari!)
                 }
@@ -125,6 +134,19 @@ class SettingTableViewController: UITableViewController {
             else{
                 
             }
+        }else if indexPath.section == 2{
+            // カメラロールが利用可能か？
+                   if UIImagePickerController.isSourceTypeAvailable(.photoLibrary) {
+                       // 写真を選ぶビュー
+                       let pickerView = UIImagePickerController()
+                       // 写真の選択元をカメラロールにする
+                       // 「.camera」にすればカメラを起動できる
+                       pickerView.sourceType = .photoLibrary
+                       // デリゲート
+                       pickerView.delegate = self
+                       // ビューに表示
+                       self.present(pickerView, animated: true)
+                   }
         }
     }
     
@@ -140,6 +162,12 @@ class SettingTableViewController: UITableViewController {
                 }else{
                     theJikanwari?.classes = 12
                 }
+                //imageの保存の条件分岐
+                if displayImage.image == UIImage(named: "noImage"){
+                    print("保存しない")
+                }else{
+                    theJikanwari?.ImageData = displayImage.image?.toJPEGData()
+                }
             }
         }else if exist == false{
             if jikanwariNameTextField.text != nil && jikanwariNameTextField.text != ""{
@@ -153,6 +181,12 @@ class SettingTableViewController: UITableViewController {
                     theClass.initialOrNot = true
                 }else{
                     theClass.initialOrNot = false
+                }
+                //imageの保存の条件分岐
+                if displayImage.image == UIImage(named: "noImage"){
+                    print("保存しない")
+                }else{
+                    theClass.ImageData = displayImage.image?.toJPEGData()
                 }
                 
                 try! realm.write{
@@ -181,6 +215,11 @@ class SettingTableViewController: UITableViewController {
                 SumGPALabel.text = String((nowJikanwariData?.GPA)!)
             }else{
                 SumGPALabel.text = "0"
+            }
+            if let nonOptinalImage:Data = nowJikanwariData?.ImageData{
+                displayImage.image = UIImage(data: nonOptinalImage)
+            }else{
+                displayImage.image = UIImage(named: "noImage")
             }
             
             //nowJikanwariDataがメインに設定されている場合
@@ -217,6 +256,8 @@ class SettingTableViewController: UITableViewController {
                 MainOrNotCell.textLabel?.textColor =  .lightGray
                 caseNoJikanwariInit = true
             }
+            
+            displayImage.image = UIImage(named: "noImage")
         }else{
             print("error")
         }
@@ -250,6 +291,36 @@ class SettingTableViewController: UITableViewController {
         }
     }
     
+    //imageを消去する
+    @IBAction func deleteImage(_ sender: Any) {
+        let alert = UIAlertController(title: "画像を消去します",message: "画像を削除してもいいですか？",preferredStyle: .alert)
+        let ok = UIAlertAction(title: "OK",style: .default,handler:{(action: UIAlertAction) -> Void in
+            // デフォルトの画像を表示する
+            self.displayImage.image = UIImage(named: "noImage")
+            
+            //realm更新
+            let realm = try! Realm()
+            let theJikanawari = realm.object(ofType: jikanwariDetail.self, forPrimaryKey: self.nowJikanwariData?.jikanwariModelNum)
+            try! realm.write{
+                theJikanawari?.ImageData = nil
+            }
+            
+        })
+        let cancel = UIAlertAction(title: "キャンセル", style: .cancel, handler: nil)
+
+        // アラートにボタン追加
+        alert.addAction(ok)
+        alert.addAction(cancel)
+
+        if displayImage.image == UIImage(named: "noImage"){
+            print("消さない")
+        }else{
+            // アラート表示
+            present(alert, animated: true, completion: nil)
+        }
+    }
+    
+    
     func daysDisplay(days:Int)->String{
         if days == 5{
             return "月火水木金"
@@ -273,5 +344,45 @@ class SettingTableViewController: UITableViewController {
             print("error")
             return 5
         }
+    }
+}
+
+
+
+
+extension UIImage{
+    /// イメージ→PNGデータに変換する
+    ///
+    /// - Returns: 変換後のPNGデータ
+    func toPNGData() -> Data {
+        guard let data = self.pngData() else {
+            print("イメージをPNGデータに変換できませんでした。")
+            return Data()
+        }
+        return data
+    }
+
+    /// イメージ→JPEGデータに変換する
+    ///
+    /// - Returns: 変換後のJPEGデータ
+    func toJPEGData() -> Data {
+        guard let data = self.jpegData(compressionQuality: 1.0) else {
+            print("イメージをJPEGデータに変換できませんでした。")
+            return Data()
+        }
+        return data
+    }
+}
+extension SettingTableViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    // 写真を選んだ後に呼ばれる処理
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        // 選択した写真を取得する
+        let image = info[.originalImage] as! UIImage
+        // ビューに表示する
+        
+        displayImage.image = image
+        
+        // 写真を選ぶビューを引っ込める
+        self.dismiss(animated: true)
     }
 }
