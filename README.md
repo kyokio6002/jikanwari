@@ -16,3 +16,5 @@
 <td><img src="screenshot/Apple_iPhone_Xs_Max_6_5-inch_1242x2688_Screenshot6.png" width=123px></td>
 </tr>
 </table>
+
+[AppStore](https://apps.apple.com/jp/app/時間割-gpa計算機能付き/id1511126473)にあげてます
