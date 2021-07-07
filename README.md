@@ -17,4 +17,4 @@
 </tr>
 </table>
 
-[AppStore](https://apps.apple.com/jp/app/時間割-gpa計算機能付き/id1511126473)にあげてます
+[AppStore](https://apps.apple.com/jp/app/時間割-gpa計算機能付き/id1511126473#?platform=iphone)にあげてます
